@@ -125,3 +125,64 @@
   </div>
 </div>
 @endforeach
+
+@if(isset($users))
+@foreach($users as $user)
+<div class="modal fade" id="editUserModal{{ $user->id }}" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit User: {{ $user->username }}</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{{ route('manager.users.update', $user->id) }}" method="POST">
+          @csrf
+          @method('PUT')
+          <div class="mb-3"><label class="form-label">Username</label><input type="text" class="form-control" name="username" value="{{ $user->username }}" required></div>
+          <div class="mb-3"><label class="form-label">Email</label><input type="email" class="form-control" name="email" value="{{ $user->email }}" required></div>
+          <div class="mb-3">
+            <label class="form-label">Role</label>
+            <select name="user_type_id" class="form-select" required>
+              @foreach($user_types as $user_type)
+              <option value="{{ $user_type->id }}" @selected($user->user_type_id == $user_type->id)>{{ $user_type->name }}</option>
+              @endforeach
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-select" required>
+              <option value="active" @selected($user->status == 'active')>Active</option>
+              <option value="inactive" @selected($user->status == 'inactive')>Inactive</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Update User</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+@endforeach
+@endif
+
+@if(isset($user_types))
+@foreach($user_types as $user_type)
+<div class="modal fade" id="editUserTypeModal{{ $user_type->id }}" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit User Type: {{ $user_type->name }}</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{{ route('manager.user_types.update', $user_type->id) }}" method="POST">
+          @csrf
+          @method('PUT')
+          <div class="mb-3"><label class="form-label">Name</label><input type="text" class="form-control" name="name" value="{{ $user_type->name }}" required></div>
+          <div class="mb-3"><label class="form-label">Description</label><textarea class="form-control" name="description" rows="3">{{ $user_type->description }}</textarea></div>
+          <button type="submit" class="btn btn-primary w-100">Update User Type</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+@endforeach
+@endif

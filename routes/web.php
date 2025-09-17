@@ -51,6 +51,16 @@ Route::prefix('manager')->name('manager.')->group(function () {
 
     // AJAX search items
     Route::get('items/search', [ManagerController::class, 'searchItems'])->name('items.search');
+
+     // Routes for User Types
+    Route::post('user-types', [ManagerController::class, 'storeUserType'])->name('user_types.store');
+    Route::put('user-types/{user_type}', [ManagerController::class, 'updateUserType'])->name('user_types.update');
+    Route::delete('user-types/{user_type}', [ManagerController::class, 'destroyUserType'])->name('user_types.destroy');
+    // Routes for User Types
+
+    // Routes for Users
+    Route::put('users/{user}', [ManagerController::class, 'updateUser'])->name('users.update');
+    Route::delete('users/{user}', [ManagerController::class, 'destroyUser'])->name('users.destroy');
 });
 
 require __DIR__ . '/auth.php';

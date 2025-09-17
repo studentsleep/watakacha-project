@@ -7,28 +7,49 @@ use App\Models\Item;
 use App\Models\ItemUnit;
 use App\Models\ItemType;
 use App\Models\ItemImage;
+use App\Models\User;
+use App\Models\UserType;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class ManagerController extends Controller
 {
-    // หน้า Index
+    /**
+     * หน้า Index หลักสำหรับจัดการข้อมูลทั้งหมด
+     */
     public function index(Request $request)
     {
-        $table = $request->table ?? 'items';
+        // รับค่าตารางที่ผู้ใช้เลือกจาก URL, หากไม่มีค่าเริ่มต้นคือ 'items'
+        $table = $request->input('table', 'items');
 
-        $itemsQuery = Item::with(['type', 'unit', 'images', 'mainImage'])->orderBy('item_id', 'desc');
-        if ($request->unit_id) $itemsQuery->where('item_unit_id', $request->unit_id);
-        if ($request->type_id) $itemsQuery->where('item_type_id', $request->type_id);
-        $perPage = $request->per_page ?? 20;
-        $items = $itemsQuery->paginate($perPage)->withQueryString();
+        // --- เตรียมข้อมูลพื้นฐานทั้งหมดที่หน้าเว็บอาจจะต้องใช้ ---
+        $data = [
+            'table' => $table,
+            'items' => collect(), // สร้าง collection ว่างๆ เพื่อป้องกัน error
+            'units' => ItemUnit::orderBy('name')->get(),
+            'types' => ItemType::orderBy('name')->get(),
+            'users' => collect(), // สร้าง collection ว่างๆ เพื่อป้องกัน error
+            'user_types' => UserType::orderBy('name')->get(),
+        ];
 
-        $units = ItemUnit::orderBy('name')->get();
-        $types = ItemType::orderBy('name')->get();
+        // --- สร้างเงื่อนไขเพื่อดึงข้อมูลหลัก (แบบแบ่งหน้า) ตามตารางที่เลือก ---
+        if ($table == 'items') {
+            $query = Item::with(['type', 'unit', 'images']);
+            if ($request->filled('unit_id')) $query->where('item_unit_id', $request->unit_id);
+            if ($request->filled('type_id')) $query->where('item_type_id', $request->type_id);
+            if ($request->filled('search')) $query->where('item_name', 'like', '%' . $request->search . '%');
+            $data['items'] = $query->paginate($request->input('per_page', 20))->withQueryString();
+        } 
+        elseif ($table == 'users') {
+            // ถ้าผู้ใช้เลือกตาราง 'users', ให้ดึงข้อมูล User มาใส่
+            $data['users'] = User::with('userType')->paginate(20)->withQueryString();
+        }
 
-        return view('manager.index', compact('items', 'units', 'types', 'table'));
+        return view('manager.index', $data);
     }
 
-    // Store Item
+    // --- CRUD สำหรับ Items ---
     public function storeItem(Request $request)
     {
         $data = $request->validate([
@@ -44,98 +65,66 @@ class ManagerController extends Controller
         $item = Item::create([
             'item_name' => $data['name'],
             'description' => $data['description'] ?? null,
-            'price' => $data['price'] ?? null,
-            'stock' => $data['stock'] ?? null,
-            'item_unit_id' => $data['item_unit_id'] ?? null,
-            'item_type_id' => $data['item_type_id'] ?? null,
+            'price' => $data['price'] ?? 0,
+            'stock' => $data['stock'] ?? 0,
+            'item_unit_id' => $data['item_unit_id'],
+            'item_type_id' => $data['item_type_id'],
             'status' => 'active',
         ]);
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $index => $image) {
-                $filename = time() . '_' . $index . '_' . $image->getClientOriginalName();
-                $image->storeAs('public/items', $filename);
+                $path = $image->store('items', 'public');
                 $item->images()->create([
-                    'path' => $filename,
+                    'path' => $path,
                     'is_main' => $index === 0,
                 ]);
             }
         }
-
-        return redirect()->back()->with('status', 'Item created.');
+        return redirect()->back()->with('status', 'Item created successfully.');
     }
 
-    // Update Item
     public function updateItem(Request $request, Item $item)
     {
         $data = $request->validate([
-            'name' => 'nullable|string|max:255',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'nullable|numeric',
-            'stock' => 'nullable|integer|min:0',
+            'price' => 'required|numeric',
+            'stock' => 'required|integer|min:0',
             'item_unit_id' => 'required|exists:item_units,item_unit_id',
             'item_type_id' => 'required|exists:item_types,item_type_id',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         $item->update([
-            'item_name' => $data['name'] ?? $item->item_name,
-            'description' => $data['description'] ?? $item->description,
-            'price' => $data['price'] ?? $item->price,
-            'stock' => $data['stock'] ?? $item->stock,
-            'item_unit_id' => $data['item_unit_id'] ?? $item->item_unit_id,
-            'item_type_id' => $data['item_type_id'] ?? $item->item_type_id,
+            'item_name' => $data['name'],
+            'description' => $data['description'],
+            'price' => $data['price'],
+            'stock' => $data['stock'],
+            'item_unit_id' => $data['item_unit_id'],
+            'item_type_id' => $data['item_type_id'],
         ]);
 
-        if ($request->hasFile('images')) {
-            // ลบรูปเก่า
-            foreach ($item->images as $oldImage) {
-                if (Storage::disk('public')->exists('items/' . $oldImage->path)) {
-                    Storage::disk('public')->delete('items/' . $oldImage->path);
-                }
-            }
-            $item->images()->delete();
-
-            foreach ($request->file('images') as $index => $image) {
-                $filename = time() . '_' . $index . '_' . $image->getClientOriginalName();
-                $image->storeAs('public/items', $filename);
-                $item->images()->create([
-                    'path' => $filename,
-                    'is_main' => $index === 0,
-                ]);
-            }
-        }
-
-        return redirect()->back()->with('status', 'Item updated.');
+        return redirect()->back()->with('status', 'Item updated successfully.');
     }
 
-    // Destroy Item
     public function destroyItem(Item $item)
     {
         foreach ($item->images as $img) {
-            if (Storage::disk('public')->exists('items/' . $img->path)) {
-                Storage::disk('public')->delete('items/' . $img->path);
-            }
+            Storage::disk('public')->delete($img->path);
         }
         $item->images()->delete();
         $item->delete();
-
-        return redirect()->back()->with('status', 'Item deleted.');
+        return redirect()->back()->with('status', 'Item deleted successfully.');
     }
 
-    // Units CRUD
+    // --- CRUD สำหรับ Item Units ---
     public function storeUnit(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:item_units,name',
             'des' => 'nullable|string',
         ]);
-
-        ItemUnit::create([
-            'name' => $request->name,
-            'description' => $request->des,
-        ]);
-
+        ItemUnit::create(['name' => $request->name, 'description' => $request->des]);
         return redirect()->route('manager.index', ['table' => 'units'])->with('status', 'Unit created successfully.');
     }
 
@@ -143,57 +132,101 @@ class ManagerController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:item_units,name,' . $unit->item_unit_id . ',item_unit_id',
-            'des' => 'nullable|string', // <-- เพิ่มการ validate
+            'des' => 'nullable|string',
         ]);
-
-        $unit->update([
-            'name' => $request->name,
-            'description' => $request->des, // <-- เพิ่มบรรทัดนี้
-        ]);
-
+        $unit->update(['name' => $request->name, 'description' => $request->des]);
         return redirect()->route('manager.index', ['table' => 'units'])->with('status', 'Unit updated successfully.');
     }
 
     public function destroyUnit(ItemUnit $unit)
     {
         $unit->delete();
-        return redirect()->back()->with('status', 'Unit deleted.');
+        return redirect()->back()->with('status', 'Unit deleted successfully.');
     }
 
-    // Types CRUD
+    // --- CRUD สำหรับ Item Types ---
     public function storeType(Request $request)
-{
-    $request->validate([
-        'name' => 'required|string|max:255|unique:item_types,name',
-        'des' => 'nullable|string', // <-- เพิ่มการ validate
-    ]);
-
-    ItemType::create([
-        'name' => $request->name,
-        'description' => $request->des, // <-- เพิ่มบรรทัดนี้
-    ]);
-
-    return redirect()->route('manager.index', ['table' => 'types'])->with('status', 'Type created successfully.');
-}
+    {
+        $request->validate([
+            'name' => 'required|string|max:255|unique:item_types,name',
+            'des' => 'nullable|string',
+        ]);
+        ItemType::create(['name' => $request->name, 'description' => $request->des]);
+        return redirect()->route('manager.index', ['table' => 'types'])->with('status', 'Type created successfully.');
+    }
 
     public function updateType(Request $request, ItemType $type)
-{
-    $request->validate([
-        'name' => 'required|string|max:255|unique:item_types,name,' . $type->item_type_id . ',item_type_id',
-        'des' => 'nullable|string', // <-- เพิ่มการ validate
-    ]);
-
-    $type->update([
-        'name' => $request->name,
-        'description' => $request->des, // <-- เพิ่มบรรทัดนี้
-    ]);
-
-    return redirect()->route('manager.index', ['table' => 'types'])->with('status', 'Type updated successfully.');
-}
+    {
+        $request->validate([
+            'name' => 'required|string|max:255|unique:item_types,name,' . $type->item_type_id . ',item_type_id',
+            'des' => 'nullable|string',
+        ]);
+        $type->update(['name' => $request->name, 'description' => $request->des]);
+        return redirect()->route('manager.index', ['table' => 'types'])->with('status', 'Type updated successfully.');
+    }
 
     public function destroyType(ItemType $type)
     {
         $type->delete();
-        return redirect()->back()->with('status', 'Type deleted.');
+        return redirect()->back()->with('status', 'Type deleted successfully.');
+    }
+
+    // --- ฟังก์ชันสำหรับจัดการ User Type ---
+    public function storeUserType(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:50|unique:user_types,name',
+            'description' => 'nullable|string'
+        ]);
+        UserType::create($request->all());
+        return redirect()->route('manager.index', ['table' => 'user_types'])->with('status', 'User Type created successfully.');
+    }
+
+    public function updateUserType(Request $request, UserType $user_type)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:50', Rule::unique('user_types')->ignore($user_type->id)],
+            'description' => 'nullable|string'
+        ]);
+        $user_type->update($request->all());
+        return redirect()->route('manager.index', ['table' => 'user_types'])->with('status', 'User Type updated successfully.');
+    }
+
+    public function destroyUserType(UserType $user_type)
+    {
+        if ($user_type->users()->count() > 0) {
+            return back()->with('error', 'Cannot delete this user type, it is currently in use.');
+        }
+        if (in_array($user_type->id, [1, 2, 3])) { // ป้องกันการลบ Type หลัก
+            return back()->with('error', 'Cannot delete default user types.');
+        }
+        $user_type->delete();
+        return redirect()->route('manager.index', ['table' => 'user_types'])->with('status', 'User Type deleted successfully.');
+    }
+    
+    // --- ฟังก์ชันสำหรับจัดการ User ---
+    public function updateUser(Request $request, User $user)
+    {
+        $request->validate([
+            'username' => ['required', 'string', 'max:50', Rule::unique('users')->ignore($user->id)],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'user_type_id' => 'required|exists:user_types,id',
+            'status' => 'required|string',
+        ]);
+
+        $user->update($request->only(['username', 'email', 'user_type_id', 'status']));
+        return redirect()->route('manager.index', ['table' => 'users'])->with('status', 'User updated successfully.');
+    }
+
+    public function destroyUser(User $user)
+    {
+        if ($user->id === Auth::id()) {
+             return back()->with('error', 'You cannot delete your own account.');
+        }
+        if ($user->user_type_id == 1 && User::where('user_type_id', 1)->count() <= 1) {
+            return back()->with('error', 'Cannot delete the last administrator.');
+        }
+        $user->delete();
+        return redirect()->route('manager.index', ['table' => 'users'])->with('status', 'User deleted successfully.');
     }
 }

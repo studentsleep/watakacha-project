@@ -125,4 +125,64 @@
   </div>
 </div>
 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-<?php /**PATH C:\xampp\htdocs\watakacha-project\resources\views/manager/modals/update.blade.php ENDPATH**/ ?>
+
+<?php if(isset($users)): ?>
+<?php $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+<div class="modal fade" id="editUserModal<?php echo e($user->id); ?>" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit User: <?php echo e($user->username); ?></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form action="<?php echo e(route('manager.users.update', $user->id)); ?>" method="POST">
+          <?php echo csrf_field(); ?>
+          <?php echo method_field('PUT'); ?>
+          <div class="mb-3"><label class="form-label">Username</label><input type="text" class="form-control" name="username" value="<?php echo e($user->username); ?>" required></div>
+          <div class="mb-3"><label class="form-label">Email</label><input type="email" class="form-control" name="email" value="<?php echo e($user->email); ?>" required></div>
+          <div class="mb-3">
+            <label class="form-label">Role</label>
+            <select name="user_type_id" class="form-select" required>
+              <?php $__currentLoopData = $user_types; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user_type): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+              <option value="<?php echo e($user_type->id); ?>" <?php if($user->user_type_id == $user_type->id): echo 'selected'; endif; ?>><?php echo e($user_type->name); ?></option>
+              <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-select" required>
+              <option value="active" <?php if($user->status == 'active'): echo 'selected'; endif; ?>>Active</option>
+              <option value="inactive" <?php if($user->status == 'inactive'): echo 'selected'; endif; ?>>Inactive</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Update User</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+<?php endif; ?>
+
+<?php if(isset($user_types)): ?>
+<?php $__currentLoopData = $user_types; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user_type): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+<div class="modal fade" id="editUserTypeModal<?php echo e($user_type->id); ?>" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit User Type: <?php echo e($user_type->name); ?></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form action="<?php echo e(route('manager.user_types.update', $user_type->id)); ?>" method="POST">
+          <?php echo csrf_field(); ?>
+          <?php echo method_field('PUT'); ?>
+          <div class="mb-3"><label class="form-label">Name</label><input type="text" class="form-control" name="name" value="<?php echo e($user_type->name); ?>" required></div>
+          <div class="mb-3"><label class="form-label">Description</label><textarea class="form-control" name="description" rows="3"><?php echo e($user_type->description); ?></textarea></div>
+          <button type="submit" class="btn btn-primary w-100">Update User Type</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+<?php endif; ?><?php /**PATH C:\xampp\htdocs\watakacha-project\resources\views/manager/modals/update.blade.php ENDPATH**/ ?>

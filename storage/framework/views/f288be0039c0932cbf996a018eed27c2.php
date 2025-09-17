@@ -8,8 +8,8 @@
 
 <body class="bg-light">
     <div class="container py-5">
-    
-    
+        
+        
 
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -24,7 +24,7 @@
 
         <!-- Flash Message -->
         <?php if(session('status')): ?>
-            <div class="alert alert-success"><?php echo e(session('status')); ?></div>
+        <div class="alert alert-success"><?php echo e(session('status')); ?></div>
         <?php endif; ?>
 
         <!-- Table Selection & Filter -->
@@ -34,43 +34,45 @@
                     <div class="col-md-3">
                         <label class="form-label small">Select Table</label>
                         <select name="table" class="form-select form-select-sm" onchange="this.form.submit()">
-                            <option value="items" <?php echo e($table=='items' ? 'selected' : ''); ?>>Items</option>
-                            <option value="units" <?php echo e($table=='units' ? 'selected' : ''); ?>>Units</option>
-                            <option value="types" <?php echo e($table=='types' ? 'selected' : ''); ?>>Types</option>
+                            <option value="items" <?php if($table=='items' ): echo 'selected'; endif; ?>>Items</option>
+                            <option value="units" <?php if($table=='units' ): echo 'selected'; endif; ?>>Item Units</option>
+                            <option value="types" <?php if($table=='types' ): echo 'selected'; endif; ?>>Item Types</option>
+                            <option value="users" <?php if($table=='users' ): echo 'selected'; endif; ?>>Users</option>
+                            <option value="user_types" <?php if($table=='user_types' ): echo 'selected'; endif; ?>>User Types</option>
                         </select>
                     </div>
 
                     <?php if($table=='items'): ?>
-                        <div class="col-md-2">
-                            <label class="form-label small">Filter by Unit</label>
-                            <select name="unit_id" class="form-select form-select-sm" onchange="this.form.submit()">
-                                <option value="">- All Units -</option>
-                                <?php $__currentLoopData = $units; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $unit): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($unit->item_unit_id); ?>" <?php echo e(request('unit_id')==$unit->item_unit_id ? 'selected' : ''); ?>><?php echo e($unit->name); ?></option>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label small">Filter by Type</label>
-                            <select name="type_id" class="form-select form-select-sm" onchange="this.form.submit()">
-                                <option value="">- All Types -</option>
-                                <?php $__currentLoopData = $types; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($type->item_type_id); ?>" <?php echo e(request('type_id')==$type->item_type_id ? 'selected' : ''); ?>><?php echo e($type->name); ?></option>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label small">Items per page</label>
-                            <select name="per_page" class="form-select form-select-sm" onchange="this.form.submit()">
-                                <?php $__currentLoopData = [5,10,20,50,100]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $n): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($n); ?>" <?php echo e(request('per_page',20)==$n ? 'selected' : ''); ?>><?php echo e($n); ?></option>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label small">Search Items</label>
-                            <input type="text" id="search_keyword" name="search" class="form-control form-control-sm" value="<?php echo e(request('search')); ?>" placeholder="Type to search...">
-                        </div>
+                    <div class="col-md-2">
+                        <label class="form-label small">Filter by Unit</label>
+                        <select name="unit_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <option value="">- All Units -</option>
+                            <?php $__currentLoopData = $units; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $unit): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($unit->item_unit_id); ?>" <?php echo e(request('unit_id')==$unit->item_unit_id ? 'selected' : ''); ?>><?php echo e($unit->name); ?></option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small">Filter by Type</label>
+                        <select name="type_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <option value="">- All Types -</option>
+                            <?php $__currentLoopData = $types; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($type->item_type_id); ?>" <?php echo e(request('type_id')==$type->item_type_id ? 'selected' : ''); ?>><?php echo e($type->name); ?></option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small">Items per page</label>
+                        <select name="per_page" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <?php $__currentLoopData = [5,10,20,50,100]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $n): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($n); ?>" <?php echo e(request('per_page',20)==$n ? 'selected' : ''); ?>><?php echo e($n); ?></option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small">Search Items</label>
+                        <input type="text" id="search_keyword" name="search" class="form-control form-control-sm" value="<?php echo e(request('search')); ?>" placeholder="Type to search...">
+                    </div>
                     <?php endif; ?>
                 </form>
             </div>
@@ -79,144 +81,238 @@
         <!-- Action Buttons -->
         <div class="d-flex justify-content-end mb-2 gap-2">
             <?php if($table=='items'): ?>
-                <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addItemModal">New Item</button>
+            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addItemModal">New Item</button>
             <?php elseif($table=='units'): ?>
-                <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addUnitModal">New Unit</button>
+            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addUnitModal">New Unit</button>
             <?php elseif($table=='types'): ?>
-                <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addTypeModal">New Type</button>
+            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addTypeModal">New Type</button>
+            <?php elseif($table=='user_types'): ?>
+            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addUserTypeModal">New User Type</button>
             <?php endif; ?>
         </div>
 
         <!-- Tables -->
         <?php if($table=='items'): ?>
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title mb-3">Items</h5>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover align-middle mb-0">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Name</th>
-                                    <th>Description</th>
-                                    <th>Type</th>
-                                    <th>Unit</th>
-                                    <th>Price</th>
-                                    <th>Stock</th>
-                                    <th>Image</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php $__empty_1 = true; $__currentLoopData = $items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                                    <tr>
-                                        <td><?php echo e($items->firstItem() + $i); ?></td>
-                                        <td><?php echo e($item->item_name); ?></td>
-                                        <td><?php echo e($item->description); ?></td>
-                                        <td><?php echo e($item->type->name ?? '-'); ?></td>
-                                        <td><?php echo e($item->unit->name ?? '-'); ?></td>
-                                        <td><?php echo e($item->price); ?></td>
-                                        <td><?php echo e($item->stock ?? '-'); ?></td>
-                                        <td>
-                                            <?php $__currentLoopData = $item->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $img): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <img src="<?php echo e(asset('storage/'.$img->path)); ?>" width="50" style="object-fit:cover; cursor:pointer;" data-bs-toggle="modal" data-bs-target="#viewImageModal<?php echo e($img->id); ?>">
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        </td>
-                                        <td class="d-flex gap-1">
-                                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editItemModal<?php echo e($item->item_id); ?>">Edit</button>
-                                            <form method="POST" action="<?php echo e(route('manager.items.destroy', $item->item_id)); ?>" onsubmit="return confirm('Delete this item?')">
-                                                <?php echo csrf_field(); ?>
-                                                <?php echo method_field('DELETE'); ?>
-                                                <button class="btn btn-sm btn-danger" type="submit">Delete</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                                    <tr>
-                                        <td colspan="9" class="text-center text-secondary">No items</td>
-                                    </tr>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
-                        <div class="mt-3"><?php echo e($items->withQueryString()->links()); ?></div>
-                    </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Items</h5>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Type</th>
+                                <th>Unit</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Image</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $__empty_1 = true; $__currentLoopData = $items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                            <tr>
+                                <td><?php echo e($items->firstItem() + $i); ?></td>
+                                <td><?php echo e($item->item_name); ?></td>
+                                <td><?php echo e($item->description); ?></td>
+                                <td><?php echo e($item->type->name ?? '-'); ?></td>
+                                <td><?php echo e($item->unit->name ?? '-'); ?></td>
+                                <td><?php echo e($item->price); ?></td>
+                                <td><?php echo e($item->stock ?? '-'); ?></td>
+                                <td>
+                                    <?php $__currentLoopData = $item->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $img): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <img src="<?php echo e(asset('storage/'.$img->path)); ?>" width="50" style="object-fit:cover; cursor:pointer;" data-bs-toggle="modal" data-bs-target="#viewImageModal<?php echo e($img->id); ?>">
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </td>
+                                <td class="d-flex gap-1">
+                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editItemModal<?php echo e($item->item_id); ?>">Edit</button>
+                                    <form method="POST" action="<?php echo e(route('manager.items.destroy', $item->item_id)); ?>" onsubmit="return confirm('Delete this item?')">
+                                        <?php echo csrf_field(); ?>
+                                        <?php echo method_field('DELETE'); ?>
+                                        <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                            <tr>
+                                <td colspan="9" class="text-center text-secondary">No items</td>
+                            </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                    <div class="mt-3"><?php echo e($items->withQueryString()->links()); ?></div>
                 </div>
             </div>
+        </div>
         <?php elseif($table=='units'): ?>
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title mb-3">Units</h5>
-                    <table class="table table-striped table-hover align-middle mb-0">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php $__empty_1 = true; $__currentLoopData = $units; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i=>$unit): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                                <tr>
-                                    <td><?php echo e($i+1); ?></td>
-                                    <td><?php echo e($unit->name); ?></td>
-                                    <td><?php echo e($unit->description); ?></td>
-                                    <td class="d-flex gap-1">
-                                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editUnitModal<?php echo e($unit->item_unit_id); ?>">Edit</button>
-                                        <form method="POST" action="<?php echo e(route('manager.units.destroy',$unit->item_unit_id)); ?>" onsubmit="return confirm('Delete this unit?')">
-                                            <?php echo csrf_field(); ?>
-                                            <?php echo method_field('DELETE'); ?>
-                                            <button class="btn btn-sm btn-danger" type="submit">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                                <tr>
-                                    <td colspan="3" class="text-center text-secondary">No units</td>
-                                </tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Units</h5>
+                <table class="table table-striped table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php $__empty_1 = true; $__currentLoopData = $units; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i=>$unit): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                        <tr>
+                            <td><?php echo e($i+1); ?></td>
+                            <td><?php echo e($unit->name); ?></td>
+                            <td><?php echo e($unit->description); ?></td>
+                            <td class="d-flex gap-1">
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editUnitModal<?php echo e($unit->item_unit_id); ?>">Edit</button>
+                                <form method="POST" action="<?php echo e(route('manager.units.destroy',$unit->item_unit_id)); ?>" onsubmit="return confirm('Delete this unit?')">
+                                    <?php echo csrf_field(); ?>
+                                    <?php echo method_field('DELETE'); ?>
+                                    <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                        <tr>
+                            <td colspan="3" class="text-center text-secondary">No units</td>
+                        </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
+        </div>
         <?php elseif($table=='types'): ?>
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title mb-3">Types</h5>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Types</h5>
+                <table class="table table-striped table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php $__empty_1 = true; $__currentLoopData = $types; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i=>$type): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                        <tr>
+                            <td><?php echo e($i+1); ?></td>
+                            <td><?php echo e($type->name); ?></td>
+                            <td><?php echo e($type->description); ?></td>
+                            <td class="d-flex gap-1">
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editTypeModal<?php echo e($type->item_type_id); ?>">Edit</button>
+                                <form method="POST" action="<?php echo e(route('manager.types.destroy',$type->item_type_id)); ?>" onsubmit="return confirm('Delete this type?')">
+                                    <?php echo csrf_field(); ?>
+                                    <?php echo method_field('DELETE'); ?>
+                                    <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                        <tr>
+                            <td colspan="3" class="text-center text-secondary">No types</td>
+                        </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        
+        <?php if($table == 'users'): ?>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Users</h5>
+                <div class="table-responsive">
                     <table class="table table-striped table-hover align-middle mb-0">
                         <thead class="table-dark">
                             <tr>
                                 <th>#</th>
-                                <th>Name</th>
-                                <th>Description</th>
+                                <th>Username</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php $__empty_1 = true; $__currentLoopData = $types; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i=>$type): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                                <tr>
-                                    <td><?php echo e($i+1); ?></td>
-                                    <td><?php echo e($type->name); ?></td>
-                                    <td><?php echo e($type->description); ?></td>
-                                    <td class="d-flex gap-1">
-                                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editTypeModal<?php echo e($type->item_type_id); ?>">Edit</button>
-                                        <form method="POST" action="<?php echo e(route('manager.types.destroy',$type->item_type_id)); ?>" onsubmit="return confirm('Delete this type?')">
-                                            <?php echo csrf_field(); ?>
-                                            <?php echo method_field('DELETE'); ?>
-                                            <button class="btn btn-sm btn-danger" type="submit">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
+                            <?php $__empty_1 = true; $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                            <tr>
+                                <td><?php echo e($user->id); ?></td>
+                                <td><?php echo e($user->username); ?></td>
+                                <td><?php echo e($user->first_name); ?> <?php echo e($user->last_name); ?></td>
+                                <td><?php echo e($user->email); ?></td>
+                                <td><span class="badge bg-info"><?php echo e($user->userType->name ?? 'N/A'); ?></span></td>
+                                <td><span class="badge <?php echo e($user->status == 'active' ? 'bg-success' : 'bg-secondary'); ?>"><?php echo e(ucfirst($user->status)); ?></span></td>
+                                <td class="d-flex gap-1">
+                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal<?php echo e($user->id); ?>">Edit</button>
+                                    <form method="POST" action="<?php echo e(route('manager.users.destroy', $user->id)); ?>" onsubmit="return confirm('Delete this user? This cannot be undone.')">
+                                        <?php echo csrf_field(); ?>
+                                        <?php echo method_field('DELETE'); ?>
+                                        <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                                <tr>
-                                    <td colspan="3" class="text-center text-secondary">No types</td>
-                                </tr>
+                            <tr>
+                                <td colspan="7" class="text-center text-secondary">No users found.</td>
+                            </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
+                    <div class="mt-3"><?php echo e($users->withQueryString()->links()); ?></div>
                 </div>
             </div>
+        </div>
         <?php endif; ?>
+        
+
+
+        
+        <?php if($table == 'user_types'): ?>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">User Types (Roles)</h5>
+                <table class="table table-striped table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php $__empty_1 = true; $__currentLoopData = $user_types; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user_type): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                        <tr>
+                            <td><?php echo e($user_type->id); ?></td>
+                            <td><?php echo e($user_type->name); ?></td>
+                            <td><?php echo e($user_type->description); ?></td>
+                            <td class="d-flex gap-1">
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editUserTypeModal<?php echo e($user_type->id); ?>">Edit</button>
+                                <form method="POST" action="<?php echo e(route('manager.user_types.destroy', $user_type->id)); ?>" onsubmit="return confirm('Delete this user type?')">
+                                    <?php echo csrf_field(); ?>
+                                    <?php echo method_field('DELETE'); ?>
+                                    <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                        <tr>
+                            <td colspan="4" class="text-center text-secondary">No user types found.</td>
+                        </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <?php endif; ?>
+        
 
     </div>
 

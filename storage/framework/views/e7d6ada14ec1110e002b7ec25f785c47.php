@@ -115,4 +115,22 @@
       </form>
     </div>
   </div>
+</div>
+
+<div class="modal fade" id="addUserTypeModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add New User Type</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form action="<?php echo e(route('manager.user_types.store')); ?>" method="POST">
+          <?php echo csrf_field(); ?>
+          <div class="mb-3"><label class="form-label">Name</label><input type="text" class="form-control" name="name" required></div>
+          <div class="mb-3"><label class="form-label">Description</label><textarea class="form-control" name="description" rows="3"></textarea></div>
+          <button type="submit" class="btn btn-primary w-100">Save</button>
+        </form>
+      </div>
+    </div>
+  </div>
 </div><?php /**PATH C:\xampp\htdocs\watakacha-project\resources\views/manager/modals/add.blade.php ENDPATH**/ ?>
