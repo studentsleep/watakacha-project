@@ -41,6 +41,9 @@ Route::prefix('manager')->name('manager.')->group(function () {
     Route::post('items/{item}/update-images', [ManagerController::class, 'updateItemImages'])->name('items.update_images');
     Route::delete('images/{image}', [ManagerController::class, 'destroyItemImage'])->name('items.images.destroy');
     Route::post('images/{image}/set-main', [ManagerController::class, 'setMainImage'])->name('items.images.set_main');
+    Route::post('items/{item}/images', [ManagerController::class, 'uploadItemImage'])->name('items.images.upload');
+Route::delete('images/{image}', [ManagerController::class, 'destroyItemImage'])->name('items.images.destroy');
+Route::post('images/{image}/set-main', [ManagerController::class, 'setMainImage'])->name('items.images.set_main');
 
     // Units CRUD
     Route::post('units', [ManagerController::class, 'storeUnit'])->name('units.store');
