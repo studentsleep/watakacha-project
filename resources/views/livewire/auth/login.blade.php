@@ -54,6 +54,11 @@ new #[Layout('components.layouts.auth')] class extends Component {
 }; ?>
 
 <div class="flex flex-col gap-6">
+    <div class="absolute end-4 top-4 md:end-8 md:top-8 z-30">
+            <a href="{{ route('home') }}" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 border dark:border-neutral-800 dark:hover:bg-neutral-800">
+                Home
+            </a>
+        </div>
     <x-auth-header 
         title="เข้าสู่ระบบ" 
         description="กรุณาใส่ข้อมูลเพื่อเข้าสู่ระบบ" 
