@@ -121,31 +121,33 @@
                                 <td><?php echo e($item->unit->name ?? '-'); ?></td>
                                 <td><?php echo e($item->price); ?></td>
                                 <td><?php echo e($item->stock ?? '-'); ?></td>
-                                <td>
+                                <<td>
                                     <?php $__currentLoopData = $item->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $img): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     
-                                    <img src="<?php echo e(asset('storage/' . $img->path)); ?>" width="50" style="object-fit:cover; cursor:pointer;" data-bs-toggle="modal" data-bs-target="#viewImageModal<?php echo e($img->id); ?>">
+                                    <img src="<?php echo e(asset('storage/' . $img->path)); ?>" width="50" style="height: 50px; object-fit: cover; cursor: pointer;"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#viewImageModal<?php echo e($img->id); ?>">
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                </td>
-                                
-                                <td class="d-flex gap-1">
+                                    </td>
                                     
-                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editItemModal<?php echo e($item->item_id); ?>">
-                                        Edit Details
-                                    </button>
+                                    <td class="d-flex gap-1">
+                                        
+                                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editItemModal<?php echo e($item->item_id); ?>">
+                                            Edit Details
+                                        </button>
 
-                                    
-                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#manageImagesModal<?php echo e($item->item_id); ?>">
-                                        Manage Images
-                                    </button>
+                                        
+                                        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#manageImagesModal<?php echo e($item->item_id); ?>">
+                                            Manage Images
+                                        </button>
 
-                                    
-                                    <form method="POST" action="<?php echo e(route('manager.items.destroy', $item->item_id)); ?>" onsubmit="return confirm('Delete this item?')">
-                                        <?php echo csrf_field(); ?>
-                                        <?php echo method_field('DELETE'); ?>
-                                        <button class="btn btn-sm btn-danger" type="submit">Delete</button>
-                                    </form>
-                                </td>
+                                        
+                                        <form method="POST" action="<?php echo e(route('manager.items.destroy', $item->item_id)); ?>" onsubmit="return confirm('Delete this item?')">
+                                            <?php echo csrf_field(); ?>
+                                            <?php echo method_field('DELETE'); ?>
+                                            <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                                        </form>
+                                    </td>
                             </tr>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>

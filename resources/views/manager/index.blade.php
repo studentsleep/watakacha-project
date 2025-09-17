@@ -121,31 +121,37 @@
                                 <td>{{ $item->unit->name ?? '-' }}</td>
                                 <td>{{ $item->price }}</td>
                                 <td>{{ $item->stock ?? '-' }}</td>
-                                <td>
+                                <<td>
                                     @foreach($item->images as $img)
-                                    {{-- เมื่อคลิกที่รูป จะเปิด Modal ชื่อ viewImageModal ตาม ID ของรูปภาพ --}}
-                                    <img src="{{ asset('storage/' . $img->path) }}" width="50" style="object-fit:cover; cursor:pointer;" data-bs-toggle="modal" data-bs-target="#viewImageModal{{ $img->id }}">
+                                    {{--
+            แก้ไข data-bs-target ให้เรียก #viewImageModal 
+            ซึ่งเป็น ID ของ Popup ดูรูปใหญ่ที่เราสร้างไว้ใน update.blade.php
+            โดยใช้ ID ของรูปภาพ ($img->id) เป็นตัวระบุ
+        --}}
+                                    <img src="{{ asset('storage/' . $img->path) }}" width="50" style="height: 50px; object-fit: cover; cursor: pointer;"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#viewImageModal{{ $img->id }}">
                                     @endforeach
-                                </td>
-                                {{-- คอลัมน์จัดการ --}}
-                                <td class="d-flex gap-1">
-                                    {{-- ปุ่มแก้ไขรายละเอียดสินค้า --}}
-                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editItemModal{{ $item->item_id }}">
-                                        Edit Details
-                                    </button>
+                                    </td>
+                                    {{-- คอลัมน์จัดการ --}}
+                                    <td class="d-flex gap-1">
+                                        {{-- ปุ่มแก้ไขรายละเอียดสินค้า --}}
+                                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editItemModal{{ $item->item_id }}">
+                                            Edit Details
+                                        </button>
 
-                                    {{-- ปุ่มเปิด Popup จัดการรูปภาพทั้งหมด --}}
-                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#manageImagesModal{{ $item->item_id }}">
-                                        Manage Images
-                                    </button>
+                                        {{-- ปุ่มเปิด Popup จัดการรูปภาพทั้งหมด --}}
+                                        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#manageImagesModal{{ $item->item_id }}">
+                                            Manage Images
+                                        </button>
 
-                                    {{-- ปุ่มลบสินค้า --}}
-                                    <form method="POST" action="{{ route('manager.items.destroy', $item->item_id) }}" onsubmit="return confirm('Delete this item?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm btn-danger" type="submit">Delete</button>
-                                    </form>
-                                </td>
+                                        {{-- ปุ่มลบสินค้า --}}
+                                        <form method="POST" action="{{ route('manager.items.destroy', $item->item_id) }}" onsubmit="return confirm('Delete this item?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                                        </form>
+                                    </td>
                             </tr>
                             @empty
                             <tr>

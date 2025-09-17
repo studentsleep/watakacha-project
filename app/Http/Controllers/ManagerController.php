@@ -54,32 +54,36 @@ class ManagerController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'nullable|numeric',
-            'stock' => 'nullable|integer|min:0',
-            'item_unit_id' => 'nullable|exists:item_units,item_unit_id',
-            'item_type_id' => 'nullable|exists:item_types,item_type_id',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'item_unit_id' => 'required|exists:item_units,item_unit_id',
+            'item_type_id' => 'required|exists:item_types,item_type_id',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
+        // 1. สร้างข้อมูล Item หลักก่อน
         $item = Item::create([
             'item_name' => $data['name'],
-            'description' => $data['description'] ?? null,
-            'price' => $data['price'] ?? 0,
-            'stock' => $data['stock'] ?? 0,
+            'description' => $data['description'],
+            'price' => $data['price'],
+            'stock' => $data['stock'],
             'item_unit_id' => $data['item_unit_id'],
             'item_type_id' => $data['item_type_id'],
             'status' => 'active',
         ]);
 
+        // 2. ✅ นำโค้ดส่วนที่หายไปกลับมา: ตรวจสอบและบันทึกรูปภาพ
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $index => $image) {
                 $path = $image->store('items', 'public');
+
                 $item->images()->create([
                     'path' => $path,
-                    'is_main' => $index === 0,
+                    'is_main' => $index === 0, // รูปแรกสุดจะเป็นรูปหลัก
                 ]);
             }
         }
+
         return redirect()->back()->with('status', 'Item created successfully.');
     }
 
