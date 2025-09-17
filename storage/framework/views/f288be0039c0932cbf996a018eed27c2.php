@@ -123,11 +123,23 @@
                                 <td><?php echo e($item->stock ?? '-'); ?></td>
                                 <td>
                                     <?php $__currentLoopData = $item->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $img): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <img src="<?php echo e(asset('storage/'.$img->path)); ?>" width="50" style="object-fit:cover; cursor:pointer;" data-bs-toggle="modal" data-bs-target="#viewImageModal<?php echo e($img->id); ?>">
+                                    
+                                    <img src="<?php echo e(asset('storage/' . $img->path)); ?>" width="50" style="object-fit:cover; cursor:pointer;" data-bs-toggle="modal" data-bs-target="#viewImageModal<?php echo e($img->id); ?>">
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </td>
+                                
                                 <td class="d-flex gap-1">
-                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editItemModal<?php echo e($item->item_id); ?>">Edit</button>
+                                    
+                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editItemModal<?php echo e($item->item_id); ?>">
+                                        Edit Details
+                                    </button>
+
+                                    
+                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#manageImagesModal<?php echo e($item->item_id); ?>">
+                                        Manage Images
+                                    </button>
+
+                                    
                                     <form method="POST" action="<?php echo e(route('manager.items.destroy', $item->item_id)); ?>" onsubmit="return confirm('Delete this item?')">
                                         <?php echo csrf_field(); ?>
                                         <?php echo method_field('DELETE'); ?>
@@ -236,6 +248,7 @@
                                 <th>Full Name</th>
                                 <th>Email</th>
                                 <th>Role</th>
+                                <th>Points</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -248,6 +261,14 @@
                                 <td><?php echo e($user->first_name); ?> <?php echo e($user->last_name); ?></td>
                                 <td><?php echo e($user->email); ?></td>
                                 <td><span class="badge bg-info"><?php echo e($user->userType->name ?? 'N/A'); ?></span></td>
+                                <td>
+                                    <?php if($user->member): ?>
+                                    <?php echo e($user->member->point); ?>
+
+                                    <?php else: ?>
+                                    <span class="text-secondary">-</span>
+                                    <?php endif; ?>
+                                </td>
                                 <td><span class="badge <?php echo e($user->status == 'active' ? 'bg-success' : 'bg-secondary'); ?>"><?php echo e(ucfirst($user->status)); ?></span></td>
                                 <td class="d-flex gap-1">
                                     <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal<?php echo e($user->id); ?>">Edit</button>

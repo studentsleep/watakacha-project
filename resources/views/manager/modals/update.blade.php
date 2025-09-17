@@ -186,3 +186,138 @@
 </div>
 @endforeach
 @endif
+
+@if(isset($items))
+@foreach($items as $item)
+<div class="modal fade" id="updateImagesModal{{ $item->item_id }}" tabindex="-1" aria-labelledby="updateImagesModalLabel{{$item->item_id}}" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updateImagesModalLabel{{$item->item_id}}">Update Images for: {{ $item->item_name }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-4 text-center">
+          <p class="mb-2">Current Main Image:</p>
+          @if($item->mainImage)
+          <img src="{{ asset('storage/' . $item->mainImage->path) }}" class="img-fluid rounded" style="max-height: 400px; margin: auto;">
+          @else
+          <p class="text-secondary">No main image.</p>
+          @endif
+        </div>
+
+        <hr class="my-4">
+
+        <form action="{{ route('manager.items.update_images', $item->item_id) }}" method="POST" enctype="multipart/form-data">
+          @csrf
+          <div class="mb-3">
+            <label for="images-{{$item->item_id}}" class="form-label">Upload New Images</label>
+            <p class="small text-muted">All old images will be replaced. The first image you select will be the main image.</p>
+            <input type="file" class="form-control" name="images[]" id="images-{{$item->item_id}}" multiple required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Upload and Replace Images</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+@endforeach
+@endif
+
+{{-- ================================================================= --}}
+{{-- ✅ 1. POPUP สำหรับ "คลิกดูรูปใหญ่" --}}
+{{-- ================================================================= --}}
+@if(isset($items))
+@foreach($items as $item)
+@foreach($item->images as $img)
+<div class="modal fade" id="viewImageModal{{ $img->id }}" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ $item->item_name }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center p-2">
+        <img src="{{ asset('storage/' . $img->path) }}" class="img-fluid rounded" style="max-height: 80vh;">
+      </div>
+    </div>
+  </div>
+</div>
+@endforeach
+@endforeach
+@endif
+
+
+{{-- ================================================================= --}}
+{{-- ✅ 2. POPUP สำหรับ "จัดการรูปภาพทั้งหมด" --}}
+{{-- ================================================================= --}}
+@if(isset($items))
+@foreach($items as $item)
+<div class="modal fade" id="manageImagesModal{{ $item->item_id }}" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Manage Images: {{ $item->item_name }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <div class="card mb-4 border-success">
+          <div class="card-body">
+            <h6 class="card-title text-success">Upload New Image</h6>
+            <form action="{{ route('manager.items.images.upload', $item->item_id) }}" method="POST" enctype="multipart/form-data">
+              @csrf
+              <div class="input-group">
+                <input type="file" class="form-control" name="image" required>
+                <button class="btn btn-success" type="submit">Upload</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <h6>Existing Images</h6>
+        @if($item->images->count() > 0)
+        <div class="row g-3">
+          @foreach($item->images as $image)
+          <div class="col-md-4 col-lg-3">
+            <div class="card h-100">
+              <div class="position-relative">
+                <img src="{{ asset('storage/' . $image->path) }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                @if($image->is_main)
+                <span class="badge bg-primary position-absolute top-0 start-0 m-2">Main Image</span>
+                @endif
+              </div>
+              <div class="card-body text-center d-flex flex-column p-2">
+                <div class="mt-auto d-grid gap-2">
+                  {{-- ปุ่ม Set as Main --}}
+                  @if(!$image->is_main)
+                  <form action="{{ route('manager.items.images.set_main', $image->id) }}" method="POST" class="d-grid">
+                    @csrf
+                    <button type="submit" class="btn btn-sm btn-outline-primary">Set as Main</button>
+                  </form>
+                  @endif
+                  {{-- ปุ่ม Delete --}}
+                  <form action="{{ route('manager.items.images.destroy', $image->id) }}" method="POST" class="d-grid" onsubmit="return confirm('Delete this image?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          @endforeach
+        </div>
+        @else
+        <p class="text-center text-secondary py-5">No images for this item yet.</p>
+        @endif
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+@endforeach
+@endif

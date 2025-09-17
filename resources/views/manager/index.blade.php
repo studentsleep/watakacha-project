@@ -123,11 +123,23 @@
                                 <td>{{ $item->stock ?? '-' }}</td>
                                 <td>
                                     @foreach($item->images as $img)
-                                    <img src="{{ asset('storage/'.$img->path) }}" width="50" style="object-fit:cover; cursor:pointer;" data-bs-toggle="modal" data-bs-target="#viewImageModal{{ $img->id }}">
+                                    {{-- เมื่อคลิกที่รูป จะเปิด Modal ชื่อ viewImageModal ตาม ID ของรูปภาพ --}}
+                                    <img src="{{ asset('storage/' . $img->path) }}" width="50" style="object-fit:cover; cursor:pointer;" data-bs-toggle="modal" data-bs-target="#viewImageModal{{ $img->id }}">
                                     @endforeach
                                 </td>
+                                {{-- คอลัมน์จัดการ --}}
                                 <td class="d-flex gap-1">
-                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editItemModal{{ $item->item_id }}">Edit</button>
+                                    {{-- ปุ่มแก้ไขรายละเอียดสินค้า --}}
+                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editItemModal{{ $item->item_id }}">
+                                        Edit Details
+                                    </button>
+
+                                    {{-- ปุ่มเปิด Popup จัดการรูปภาพทั้งหมด --}}
+                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#manageImagesModal{{ $item->item_id }}">
+                                        Manage Images
+                                    </button>
+
+                                    {{-- ปุ่มลบสินค้า --}}
                                     <form method="POST" action="{{ route('manager.items.destroy', $item->item_id) }}" onsubmit="return confirm('Delete this item?')">
                                         @csrf
                                         @method('DELETE')
@@ -236,6 +248,7 @@
                                 <th>Full Name</th>
                                 <th>Email</th>
                                 <th>Role</th>
+                                <th>Points</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -248,6 +261,13 @@
                                 <td>{{ $user->first_name }} {{ $user->last_name }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td><span class="badge bg-info">{{ $user->userType->name ?? 'N/A' }}</span></td>
+                                <td>
+                                    @if($user->member)
+                                    {{ $user->member->point }}
+                                    @else
+                                    <span class="text-secondary">-</span>
+                                    @endif
+                                </td>
                                 <td><span class="badge {{ $user->status == 'active' ? 'bg-success' : 'bg-secondary' }}">{{ ucfirst($user->status) }}</span></td>
                                 <td class="d-flex gap-1">
                                     <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal{{ $user->id }}">Edit</button>

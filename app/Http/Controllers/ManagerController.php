@@ -40,10 +40,9 @@ class ManagerController extends Controller
             if ($request->filled('type_id')) $query->where('item_type_id', $request->type_id);
             if ($request->filled('search')) $query->where('item_name', 'like', '%' . $request->search . '%');
             $data['items'] = $query->paginate($request->input('per_page', 20))->withQueryString();
-        } 
-        elseif ($table == 'users') {
+        } elseif ($table == 'users') {
             // ถ้าผู้ใช้เลือกตาราง 'users', ให้ดึงข้อมูล User มาใส่
-            $data['users'] = User::with('userType')->paginate(20)->withQueryString();
+            $data['users'] = User::with('userType', 'member')->paginate(20)->withQueryString();
         }
 
         return view('manager.index', $data);
@@ -106,6 +105,60 @@ class ManagerController extends Controller
 
         return redirect()->back()->with('status', 'Item updated successfully.');
     }
+
+    // START: ฟังก์ชันสำหรับอัปเดตรูปภาพโดยเฉพาะ
+    public function uploadItemImage(Request $request, Item $item)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        $path = $request->file('image')->store('items', 'public');
+
+        // ตรวจสอบว่าสินค้านี้ยังไม่มีรูปภาพเลยหรือไม่ ถ้าใช่ ให้ตั้งรูปนี้เป็นรูปหลัก
+        $isFirstImage = $item->images()->count() == 0;
+
+        $item->images()->create([
+            'path' => $path,
+            'is_main' => $isFirstImage,
+        ]);
+
+        return back()->with('status', 'Image uploaded successfully.');
+    }
+
+    /**
+     * ลบรูปภาพทีละรูป
+     */
+    public function destroyItemImage(ItemImage $image)
+    {
+        Storage::disk('public')->delete($image->path);
+        $image->delete();
+
+        $item = $image->item;
+        if ($image->is_main && $item->images()->count() > 0) {
+            $newMainImage = $item->images()->first();
+            $newMainImage->is_main = true;
+            $newMainImage->save();
+        }
+
+        return back()->with('status', 'Image deleted successfully.');
+    }
+
+    /**
+     * ตั้งค่ารูปภาพหลัก
+     */
+    public function setMainImage(ItemImage $image)
+    {
+        $item = $image->item;
+
+        $item->images()->update(['is_main' => false]);
+
+        $image->is_main = true;
+        $image->save();
+
+        return back()->with('status', 'Main image has been set.');
+    }
+    // END: ฟังก์ชันสำหรับอัปเดตรูปภาพโดยเฉพาะ
 
     public function destroyItem(Item $item)
     {
@@ -203,7 +256,7 @@ class ManagerController extends Controller
         $user_type->delete();
         return redirect()->route('manager.index', ['table' => 'user_types'])->with('status', 'User Type deleted successfully.');
     }
-    
+
     // --- ฟังก์ชันสำหรับจัดการ User ---
     public function updateUser(Request $request, User $user)
     {
@@ -221,7 +274,7 @@ class ManagerController extends Controller
     public function destroyUser(User $user)
     {
         if ($user->id === Auth::id()) {
-             return back()->with('error', 'You cannot delete your own account.');
+            return back()->with('error', 'You cannot delete your own account.');
         }
         if ($user->user_type_id == 1 && User::where('user_type_id', 1)->count() <= 1) {
             return back()->with('error', 'Cannot delete the last administrator.');

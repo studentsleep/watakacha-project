@@ -8,7 +8,7 @@ use Livewire\Volt\Component;
 use Livewire\Attributes\Layout;
 
 new #[Layout('components.layouts.auth')] class extends Component {
-    
+
     public string $username = '';
     public string $password = '';
     public bool $remember = false;
@@ -55,14 +55,13 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
 <div class="flex flex-col gap-6">
     <div class="absolute end-4 top-4 md:end-8 md:top-8 z-30">
-            <a href="{{ route('home') }}" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 border dark:border-neutral-800 dark:hover:bg-neutral-800">
-                Home
-            </a>
-        </div>
-    <x-auth-header 
-        title="เข้าสู่ระบบ" 
-        description="กรุณาใส่ข้อมูลเพื่อเข้าสู่ระบบ" 
-    />
+        <a href="{{ route('home') }}" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 border dark:border-neutral-800 dark:hover:bg-neutral-800">
+            Home
+        </a>
+    </div>
+    <x-auth-header
+        title="เข้าสู่ระบบ"
+        description="กรุณาใส่ข้อมูลเพื่อเข้าสู่ระบบ" />
 
     <!-- Session Status -->
     <x-auth-session-status class="text-center" :status="session('status')" />
@@ -70,42 +69,41 @@ new #[Layout('components.layouts.auth')] class extends Component {
     <form wire:submit="login" class="flex flex-col gap-4">
         <div>
             <label for="login_username" class="block text-sm font-medium text-gray-700">Username</label>
-            <input wire:model.defer="username" 
-                   id="login_username" 
-                   type="text" 
-                   placeholder="Username" 
-                   required 
-                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
-            @error('username') 
-                <span class="text-sm text-red-600 mt-1">{{ $message }}</span> 
+            <input wire:model.defer="username"
+                id="login_username"
+                type="text"
+                placeholder="Username"
+                required
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
+            @error('username')
+            <span class="text-sm text-red-600 mt-1">{{ $message }}</span>
             @enderror
         </div>
 
         <div>
             <label for="login_password" class="block text-sm font-medium text-gray-700">Password</label>
-            <input wire:model.defer="password" 
-                   id="login_password" 
-                   type="password" 
-                   placeholder="Password" 
-                   required 
-                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
-            @error('password') 
-                <span class="text-sm text-red-600 mt-1">{{ $message }}</span> 
+            <input wire:model.defer="password"
+                id="login_password"
+                type="password"
+                placeholder="Password"
+                required
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
+            @error('password')
+            <span class="text-sm text-red-600 mt-1">{{ $message }}</span>
             @enderror
         </div>
 
         <div class="flex items-center">
-            <input wire:model.defer="remember" 
-                   id="remember" 
-                   type="checkbox" 
-                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+            <input wire:model.defer="remember"
+                id="remember"
+                type="checkbox"
+                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
             <label for="remember" class="ml-2 block text-sm text-gray-900">
                 จดจำฉันไว้
             </label>
         </div>
 
-        <button type="submit" 
-                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+        <button type="submit" class="inline-flex h-10 w-full items-center justify-center whitespace-nowrap rounded-md bg-neutral-950 px-4 py-2 text-sm font-medium text-white ring-offset-background transition-colors hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-200">
             เข้าสู่ระบบ
         </button>
     </form>
