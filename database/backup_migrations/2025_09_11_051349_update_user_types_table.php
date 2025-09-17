@@ -16,7 +16,7 @@ return new class extends Migration {
         });
 
         // ตาราง users (แก้ไขของ Laravel เดิม)
-        Schema::table('users', function (Blueprint $table) {
+        /*Schema::table('users', function (Blueprint $table) {
             $table->unsignedBigInteger('user_type_id')->nullable()->after('id');
 
             // FK เชื่อม users.user_type_id -> user_types.id
@@ -25,15 +25,15 @@ return new class extends Migration {
                   ->on('user_types')
                   ->cascadeOnUpdate()
                   ->nullOnDelete();
-        });
+        });*/
     }
 
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        /*Schema::table('users', function (Blueprint $table) {
             $table->dropForeign(['user_type_id']);
             $table->dropColumn('user_type_id');
-        });
+        });*/
 
         Schema::dropIfExists('user_types');
     }

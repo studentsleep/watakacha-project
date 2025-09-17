@@ -2,8 +2,8 @@
 <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form method="POST" action="{{ route('manager.items.store') }}" enctype="multipart/form-data">
-        @csrf
+      <form method="POST" action="<?php echo e(route('manager.items.store')); ?>" enctype="multipart/form-data">
+        <?php echo csrf_field(); ?>
         <div class="modal-header">
           <h5 class="modal-title" id="addItemModalLabel">Add New Item</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -29,18 +29,18 @@
             <label class="form-label">Unit</label>
             <select name="item_unit_id" class="form-select" required>
               <option value="">Select unit</option>
-              @foreach($units as $unit)
-              <option value="{{ $unit->item_unit_id }}">{{ $unit->name }}</option>
-              @endforeach
+              <?php $__currentLoopData = $units; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $unit): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+              <option value="<?php echo e($unit->item_unit_id); ?>"><?php echo e($unit->name); ?></option>
+              <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </select>
           </div>
           <div class="mb-3">
             <label class="form-label">Type</label>
             <select name="item_type_id" class="form-select" required>
               <option value="">Select type</option>
-              @foreach($types as $type)
-              <option value="{{ $type->item_type_id }}">{{ $type->name }}</option>
-              @endforeach
+              <?php $__currentLoopData = $types; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+              <option value="<?php echo e($type->item_type_id); ?>"><?php echo e($type->name); ?></option>
+              <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </select>
           </div>
           <div class="mb-3">
@@ -63,8 +63,8 @@
 <div class="modal fade" id="addUnitModal" tabindex="-1" aria-labelledby="addUnitModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form method="POST" action="{{ route('manager.units.store') }}">
-        @csrf
+      <form method="POST" action="<?php echo e(route('manager.units.store')); ?>">
+        <?php echo csrf_field(); ?>
         <div class="modal-header">
           <h5 class="modal-title" id="addUnitModalLabel">Add New Unit</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -92,8 +92,8 @@
 <div class="modal fade" id="addTypeModal" tabindex="-1" aria-labelledby="addTypeModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form method="POST" action="{{ route('manager.types.store') }}">
-        @csrf
+      <form method="POST" action="<?php echo e(route('manager.types.store')); ?>">
+        <?php echo csrf_field(); ?>
         <div class="modal-header">
           <h5 class="modal-title" id="addTypeModalLabel">Add New Type</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -115,4 +115,4 @@
       </form>
     </div>
   </div>
-</div>
+</div><?php /**PATH C:\xampp\htdocs\watakacha-project\resources\views/manager/modals/add.blade.php ENDPATH**/ ?>

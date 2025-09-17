@@ -9,7 +9,7 @@
 <body class="bg-light">
     <div class="container py-5">
     {{-- เรียกใช้ Livewire Component --}}
-    @livewire('manager.inventory')
+    {{--@livewire('manager.inventory')--}}
 
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -119,7 +119,7 @@
                                         <td>{{ $item->stock ?? '-' }}</td>
                                         <td>
                                             @foreach($item->images as $img)
-                                                <img src="{{ asset('storage/items/'.$img->path) }}" width="50" style="object-fit:cover; cursor:pointer;" data-bs-toggle="modal" data-bs-target="#viewImageModal{{ $img->id }}">
+                                                <img src="{{ asset('storage/'.$img->path) }}" width="50" style="object-fit:cover; cursor:pointer;" data-bs-toggle="modal" data-bs-target="#viewImageModal{{ $img->id }}">
                                             @endforeach
                                         </td>
                                         <td class="d-flex gap-1">
@@ -151,6 +151,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Name</th>
+                                <th>Description</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -159,6 +160,7 @@
                                 <tr>
                                     <td>{{ $i+1 }}</td>
                                     <td>{{ $unit->name }}</td>
+                                    <td>{{ $unit->description }}</td>
                                     <td class="d-flex gap-1">
                                         <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editUnitModal{{ $unit->item_unit_id }}">Edit</button>
                                         <form method="POST" action="{{ route('manager.units.destroy',$unit->item_unit_id) }}" onsubmit="return confirm('Delete this unit?')">
@@ -186,6 +188,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Name</th>
+                                <th>Description</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -194,6 +197,7 @@
                                 <tr>
                                     <td>{{ $i+1 }}</td>
                                     <td>{{ $type->name }}</td>
+                                    <td>{{ $type->description }}</td>
                                     <td class="d-flex gap-1">
                                         <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editTypeModal{{ $type->item_type_id }}">Edit</button>
                                         <form method="POST" action="{{ route('manager.types.destroy',$type->item_type_id) }}" onsubmit="return confirm('Delete this type?')">

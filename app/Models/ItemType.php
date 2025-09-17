@@ -6,17 +6,28 @@ use Illuminate\Database\Eloquent\Model;
 
 class ItemType extends Model
 {
+    /**
+     * The primary key associated with the table.
+     *
+     * @var string
+     */
     protected $primaryKey = 'item_type_id';
-    protected $fillable = ['item_type_name', 'name'];
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'name',
+        'description',
+    ];
+
+    /**
+     * Get the items for the item unit.
+     */
     public function items()
     {
         return $this->hasMany(Item::class, 'item_type_id', 'item_type_id');
-    }
-
-    // Accessor: ให้ ->name อ่านได้ทั้ง name หรือ item_type_name
-    public function getNameAttribute()
-    {
-        return $this->attributes['name'] ?? $this->attributes['item_type_name'] ?? null;
     }
 }

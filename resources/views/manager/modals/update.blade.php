@@ -79,6 +79,10 @@
             <label class="form-label">Unit Name</label>
             <input name="name" class="form-control" value="{{ $unit->name }}" required>
           </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <input name="des" class="form-control" value="{{ $unit->description }}">
+          </div>
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-success">Update Unit</button>
@@ -106,6 +110,10 @@
           <div class="mb-3">
             <label class="form-label">Type Name</label>
             <input name="name" class="form-control" value="{{ $type->name }}" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <input name="des" class="form-control" value="{{ $type->description }}">
           </div>
         </div>
         <div class="modal-footer">

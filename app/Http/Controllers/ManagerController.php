@@ -53,7 +53,7 @@ class ManagerController extends Controller
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $index => $image) {
-                $filename = time().'_'.$index.'_'.$image->getClientOriginalName();
+                $filename = time() . '_' . $index . '_' . $image->getClientOriginalName();
                 $image->storeAs('public/items', $filename);
                 $item->images()->create([
                     'path' => $filename,
@@ -90,14 +90,14 @@ class ManagerController extends Controller
         if ($request->hasFile('images')) {
             // ลบรูปเก่า
             foreach ($item->images as $oldImage) {
-                if (Storage::disk('public')->exists('items/'.$oldImage->path)) {
-                    Storage::disk('public')->delete('items/'.$oldImage->path);
+                if (Storage::disk('public')->exists('items/' . $oldImage->path)) {
+                    Storage::disk('public')->delete('items/' . $oldImage->path);
                 }
             }
             $item->images()->delete();
 
             foreach ($request->file('images') as $index => $image) {
-                $filename = time().'_'.$index.'_'.$image->getClientOriginalName();
+                $filename = time() . '_' . $index . '_' . $image->getClientOriginalName();
                 $image->storeAs('public/items', $filename);
                 $item->images()->create([
                     'path' => $filename,
@@ -113,8 +113,8 @@ class ManagerController extends Controller
     public function destroyItem(Item $item)
     {
         foreach ($item->images as $img) {
-            if (Storage::disk('public')->exists('items/'.$img->path)) {
-                Storage::disk('public')->delete('items/'.$img->path);
+            if (Storage::disk('public')->exists('items/' . $img->path)) {
+                Storage::disk('public')->delete('items/' . $img->path);
             }
         }
         $item->images()->delete();
@@ -126,18 +126,32 @@ class ManagerController extends Controller
     // Units CRUD
     public function storeUnit(Request $request)
     {
-        $data = $request->validate(['name' => 'required|string|max:100|unique:item_units,name']);
-        ItemUnit::create(['name' => $data['name']]);
-        return redirect()->back()->with('status', 'Unit added.');
+        $request->validate([
+            'name' => 'required|string|max:255|unique:item_units,name',
+            'des' => 'nullable|string',
+        ]);
+
+        ItemUnit::create([
+            'name' => $request->name,
+            'description' => $request->des,
+        ]);
+
+        return redirect()->route('manager.index', ['table' => 'units'])->with('status', 'Unit created successfully.');
     }
 
     public function updateUnit(Request $request, ItemUnit $unit)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:100|unique:item_units,name,' . $unit->item_unit_id . ',item_unit_id'
+        $request->validate([
+            'name' => 'required|string|max:255|unique:item_units,name,' . $unit->item_unit_id . ',item_unit_id',
+            'des' => 'nullable|string', // <-- เพิ่มการ validate
         ]);
-        $unit->update(['name' => $data['name']]);
-        return redirect()->back()->with('status', 'Unit updated.');
+
+        $unit->update([
+            'name' => $request->name,
+            'description' => $request->des, // <-- เพิ่มบรรทัดนี้
+        ]);
+
+        return redirect()->route('manager.index', ['table' => 'units'])->with('status', 'Unit updated successfully.');
     }
 
     public function destroyUnit(ItemUnit $unit)
@@ -148,20 +162,34 @@ class ManagerController extends Controller
 
     // Types CRUD
     public function storeType(Request $request)
-    {
-        $data = $request->validate(['name' => 'required|string|max:100|unique:item_types,name']);
-        ItemType::create(['name' => $data['name']]);
-        return redirect()->back()->with('status', 'Type added.');
-    }
+{
+    $request->validate([
+        'name' => 'required|string|max:255|unique:item_types,name',
+        'des' => 'nullable|string', // <-- เพิ่มการ validate
+    ]);
+
+    ItemType::create([
+        'name' => $request->name,
+        'description' => $request->des, // <-- เพิ่มบรรทัดนี้
+    ]);
+
+    return redirect()->route('manager.index', ['table' => 'types'])->with('status', 'Type created successfully.');
+}
 
     public function updateType(Request $request, ItemType $type)
-    {
-        $data = $request->validate([
-            'name' => 'required|string|max:100|unique:item_types,name,' . $type->item_type_id . ',item_type_id'
-        ]);
-        $type->update(['name' => $data['name']]);
-        return redirect()->back()->with('status', 'Type updated.');
-    }
+{
+    $request->validate([
+        'name' => 'required|string|max:255|unique:item_types,name,' . $type->item_type_id . ',item_type_id',
+        'des' => 'nullable|string', // <-- เพิ่มการ validate
+    ]);
+
+    $type->update([
+        'name' => $request->name,
+        'description' => $request->des, // <-- เพิ่มบรรทัดนี้
+    ]);
+
+    return redirect()->route('manager.index', ['table' => 'types'])->with('status', 'Type updated successfully.');
+}
 
     public function destroyType(ItemType $type)
     {

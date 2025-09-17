@@ -6,17 +6,28 @@ use Illuminate\Database\Eloquent\Model;
 
 class ItemUnit extends Model
 {
-    protected $primaryKey = 'item_unit_id'; // ระบุ PK จริง
-    protected $fillable = ['name', 'item_unit_name'];
+    /**
+     * The primary key associated with the table.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'item_unit_id';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'name',
+        'description',
+    ];
+
+    /**
+     * Get the items for the item unit.
+     */
     public function items()
     {
         return $this->hasMany(Item::class, 'item_unit_id', 'item_unit_id');
-    }
-
-    // Accessor: ให้ ->name อ่านได้ไม่ว่าจะเก็บเป็น 'name' หรือ 'item_unit_name'
-    public function getNameAttribute()
-    {
-        return $this->attributes['name'] ?? $this->attributes['item_unit_name'] ?? null;
     }
 }
