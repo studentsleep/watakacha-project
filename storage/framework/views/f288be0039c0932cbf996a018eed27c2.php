@@ -14,8 +14,8 @@
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2 class="fw-bold">Manager — Inventory</h2>
-                <p class="text-secondary mb-0">Manage items, units and types</p>
+                <h2 class="fw-bold">Manager Dashboard</h2>
+                <p class="text-secondary mb-0">ส่วนจัดการข้อมูล</p>
             </div>
             <div>
                 <a href="<?php echo e(url('/')); ?>" class="btn btn-outline-secondary">Home</a>

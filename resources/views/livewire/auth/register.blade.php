@@ -34,9 +34,9 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
         $user = User::create($validated);
 
-        if ($user->user_type_id == 2) {
+        /*if ($user->user_type_id == 2) {
             $user->member()->create(['point' => 0]);
-        }
+        }*/
 
         Auth::login($user);
 
